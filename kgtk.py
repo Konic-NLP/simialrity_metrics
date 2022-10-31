@@ -5,6 +5,14 @@ import pandas as pd
 
 
 def call_semantic_similarity(input_file, url='https://kgtk.isi.edu/similarity_api'):
+    '''
+
+
+
+    :param input_file:  a tsv files, two columns and each row is pair of qnodes
+    :param url: kgtk api url
+    :return: a tsv file including six types of similarity score from kgtk for each row in the input_file
+    '''
     file_name = os.path.basename(input_file)
     files = {
         'file': (file_name, open(input_file, mode='rb'), 'application/octet-stream')
@@ -16,6 +24,12 @@ def call_semantic_similarity(input_file, url='https://kgtk.isi.edu/similarity_ap
 
 
 def query_parent(qnode):
+    '''
+     input a qnode, and return all the ancestors with which the input qnode has a instance-of /subcloss of, this functon
+     is used for filtering the re-mapped qnode
+    :param qnode:
+    :return: all ancestors qnode
+    '''
     url = 'https://query.wikidata.org/sparql'
     query = '''
     SELECT ?ancestor WHERE{
@@ -37,6 +51,12 @@ def query_parent(qnode):
 
 
 def map_qnode(query_items):
+    '''
+
+    mapped based on the argument value and return all the qnodes which entry is the query items
+    :param query_items:
+    :return:qnode
+    '''
     url = 'https://query.wikidata.org/sparql'
     query = '''
     SELECT ?item ?prefLabel WHERE {
@@ -51,5 +71,7 @@ def map_qnode(query_items):
         r = requests.get(url, params={'format': 'json', 'query': query}, headers=headers)
 
         data = r.json()
+        return data
     except:
         print(r)
+
